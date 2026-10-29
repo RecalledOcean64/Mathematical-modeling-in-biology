@@ -1,0 +1,46 @@
+podaci = {{4.56, 0.0016308}, {5.66, 0.0032148}, {6.68, 
+    0.005614}, {7.89, 0.0118598}, {8.81, 0.02015}, {9.79, 
+    0.027538}, {10.99, 0.034546}, {11.99, 0.06608}, {12.86, 
+    0.078932}, {15.17, 0.155}};
+logPodaciSvi = {#[[1]], Log[#[[2]]]} & /@ podaci;
+
+logVolumeni = Log[podaci[[All, 2]]];
+Print[ListPlot[logPodaciSvi, 
+   PlotStyle -> Directive[Blue, PointSize[0.015]], Frame -> True, 
+   FrameLabel -> {"Vrijeme (dani)", "ln(Volumen)"}, 
+   PlotLabel -> "Prikaz svih logaritmiranih podataka", 
+   GridLines -> Automatic, AxesOrigin -> {0, 0}]];
+podaci5 = Take[podaci, 5];
+tablicaPodataka = 
+  Table[{podaci5[[i, 1]], podaci5[[i, 2]], logVolumeni[[i]]}, {i, 1, 
+    5}];
+Print[Grid[
+   Prepend[tablicaPodataka, {"Vrijeme (dani)", "Volumen", 
+     "ln(Volumen)"}], Frame -> All]];
+
+
+logPodaci5 = {#[[1]], Log[#[[2]]]} & /@ podaci5;
+
+pravacSvi = LinearModelFit[logPodaciSvi, t, t];
+pravac5 = LinearModelFit[logPodaci5, t, t];
+
+Print[Show[
+   ListPlot[logPodaciSvi, 
+    PlotStyle -> Directive[Black, PointSize[0.02]], 
+    PlotLegends -> {"Sva mjerenja"}], 
+   Plot[pravacSvi[t], {t, 4, 16}, 
+    PlotStyle -> Directive[Red, Dashed, Thick], 
+    PlotLegends -> {"Loš fit: Pravac kroz SVIH 10"}], 
+   Plot[pravac5[t], {t, 4, 16}, PlotStyle -> Directive[Blue, Thick], 
+    PlotLegends -> {"Dobar fit: Pravac kroz prvih 5"}], Frame -> True,
+    GridLines -> Automatic, 
+   PlotLabel -> "Zašto odbacujemo zadnjih 5 točaka?"]];
+
+linearniModel = LinearModelFit[logPodaci5, t, t];
+
+
+\[Alpha]Lin = linearniModel["BestFitParameters"][[2]];
+tdLin = Log[2]/\[Alpha]Lin;
+				
+Print["Brzina rasta \[Alpha] = ", \[Alpha]Lin];
+Print["Vrijeme udvostručenja Td = ", tdLin, " dana"];
