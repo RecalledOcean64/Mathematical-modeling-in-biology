@@ -1,0 +1,9 @@
+DSolve[{y'[t] == 2 y[t] - y[t]^2, y[0] == 0.1}, y[t], t]
+sol = NDSolve[{y'[t] == 2 y[t] - y[t]^2, y[0] == 0.1}, y, {t, 0, 5}, 
+   Method -> {"FixedStep", Method -> "ExplicitEuler"}, 
+   StartingStepSize -> 0.1, MaxStepFraction -> 1/50, 
+   WorkingPrecision -> MachinePrecision];
+Plot[Evaluate[y[t] /. First[sol]], {t, 0, 5}, 
+ PlotStyle -> Directive[Blue, Dashing[{0.03, 0.02}]], 
+ AxesLabel -> {"t", "y(t)"}, 
+ PlotLabel -> "Aproksimacija Eulerovom metodom"]
